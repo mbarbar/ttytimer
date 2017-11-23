@@ -90,7 +90,7 @@ init(void)
           ttyclock->geo.a = 1;
      if(!ttyclock->geo.b)
           ttyclock->geo.b = 1;
-     ttyclock->geo.w = (ttyclock->option.second) ? SECFRAMEW : NORMFRAMEW;
+     ttyclock->geo.w = SECFRAMEW;
      ttyclock->geo.h = 7;
      ttyclock->tm = localtime(&(ttyclock->lt));
      ttyclock->lt = time(NULL);
@@ -266,18 +266,15 @@ draw_clock(void)
           wrefresh(ttyclock->datewin);
      }
 
-     /* Draw second if the option is enable */
-     if(ttyclock->option.second)
-     {
-          /* Again 2 dot for number separation */
-          wbkgdset(ttyclock->framewin, dotcolor);
-          mvwaddstr(ttyclock->framewin, 2, NORMFRAMEW, "  ");
-          mvwaddstr(ttyclock->framewin, 4, NORMFRAMEW, "  ");
+     /* Draw second frame. */
+     /* Again 2 dot for number separation */
+     wbkgdset(ttyclock->framewin, dotcolor);
+     mvwaddstr(ttyclock->framewin, 2, NORMFRAMEW, "  ");
+     mvwaddstr(ttyclock->framewin, 4, NORMFRAMEW, "  ");
 
-          /* Draw second numbers */
-          draw_number(ttyclock->date.second[0], 1, 39);
-          draw_number(ttyclock->date.second[1], 1, 46);
-     }
+     /* Draw second numbers */
+     draw_number(ttyclock->date.second[0], 1, 39);
+     draw_number(ttyclock->date.second[1], 1, 46);
 
      return;
 }
@@ -354,7 +351,7 @@ clock_rebound(void)
 void
 set_second(void)
 {
-     int new_w = (((ttyclock->option.second = !ttyclock->option.second)) ? SECFRAMEW : NORMFRAMEW);
+     int new_w = SECFRAMEW;
      int y_adj;
 
      for(y_adj = 0; (ttyclock->geo.y - y_adj) > (COLS - new_w - 1); ++y_adj);
@@ -451,11 +448,6 @@ key_event(void)
 		  ttyclock->running = False;
           break;
 
-     case 's':
-     case 'S':
-          set_second();
-          break;
-
      case 'c':
      case 'C':
           set_center(!ttyclock->option.center);
@@ -524,8 +516,7 @@ main(int argc, char **argv)
           {
           case 'h':
           default:
-               printf("usage : tty-clock [-iuvsScbtrahDBxn] [-C [0-7]] [-f format] [-d delay] [-a nsdelay] [-T tty] \n"
-                      "    -s            Show seconds                                   \n"
+               printf("usage : tty-clock [-iuvScbtrahDBxn] [-C [0-7]] [-f format] [-d delay] [-a nsdelay] [-T tty] \n"
                       "    -x            Show box                                       \n"
                       "    -c            Set the clock at the center of the terminal    \n"
                       "    -C [0-7]      Set the clock color                            \n"
@@ -550,9 +541,6 @@ main(int argc, char **argv)
           case 'v':
                puts("TTY-Clock 2 © devel version");
                exit(EXIT_SUCCESS);
-               break;
-          case 's':
-               ttyclock->option.second = True;
                break;
           case 'c':
                ttyclock->option.center = True;

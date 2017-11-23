@@ -1,5 +1,4 @@
-usage : tty-clock [-iuvsScbrahDBxn] [-C [0-7]] [-f format] [-d delay] [-a nsdelay] [-T tty] 
-    -s            Show seconds                                   
+usage : tty-clock [-iuvScbrahDBxn] [-C [0-7]] [-f format] [-d delay] [-a nsdelay] [-T tty] 
     -x            Show box                                       
     -c            Set the clock at the center of the terminal    
     -C [0-7]      Set the clock color                            

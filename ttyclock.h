@@ -68,7 +68,6 @@ typedef struct
      /* Running option */
      struct
      {
-          Bool second;
           Bool center;
           Bool rebound;
           Bool date;
