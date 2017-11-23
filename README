@@ -6,7 +6,6 @@ usage : tty-clock [-iuvsScbtrahDBxn] [-C [0-7]] [-f format] [-d delay] [-a nsdel
     -C [0-7]      Set the clock color                            
     -b            Use bold colors                                
     -t            Set the hour in 12h format                     
-    -u            Use UTC time                                   
     -T tty        Display the clock on the specified terminal    
     -r            Do rebound the clock                           
     -f format     Set the date format                            

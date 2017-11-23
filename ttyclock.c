@@ -93,9 +93,6 @@ init(void)
      ttyclock->geo.w = (ttyclock->option.second) ? SECFRAMEW : NORMFRAMEW;
      ttyclock->geo.h = 7;
      ttyclock->tm = localtime(&(ttyclock->lt));
-     if(ttyclock->option.utc) {
-         ttyclock->tm = gmtime(&(ttyclock->lt));
-     }
      ttyclock->lt = time(NULL);
      update_hour();
 
@@ -184,9 +181,6 @@ update_hour(void)
 
      ttyclock->lt = time(NULL);
      ttyclock->tm = localtime(&(ttyclock->lt));
-     if(ttyclock->option.utc) {
-         ttyclock->tm = gmtime(&(ttyclock->lt));
-     }
 
      ihour = ttyclock->tm->tm_hour;
 
@@ -562,7 +556,7 @@ main(int argc, char **argv)
 
      atexit(cleanup);
 
-     while ((c = getopt(argc, argv, "iuvsScbtrhBxnDC:f:d:T:a:")) != -1)
+     while ((c = getopt(argc, argv, "ivsScbtrhBxnDC:f:d:T:a:")) != -1)
      {
           switch(c)
           {
@@ -576,7 +570,6 @@ main(int argc, char **argv)
                       "    -C [0-7]      Set the clock color                            \n"
                       "    -b            Use bold colors                                \n"
                       "    -t            Set the hour in 12h format                     \n"
-                      "    -u            Use UTC time                                   \n"
 		      "    -T tty        Display the clock on the specified terminal    \n"
                       "    -r            Do rebound the clock                           \n"
                       "    -f format     Set the date format                            \n"
@@ -593,9 +586,6 @@ main(int argc, char **argv)
           case 'i':
                puts("TTY-Clock 2 © by Martin Duquesnoy (xorg62@gmail.com), Grey (grey@greytheory.net)");
                exit(EXIT_SUCCESS);
-               break;
-          case 'u':
-               ttyclock->option.utc = True;
                break;
           case 'v':
                puts("TTY-Clock 2 © devel version");

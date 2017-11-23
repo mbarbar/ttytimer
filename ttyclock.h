@@ -74,7 +74,6 @@ typedef struct
           Bool center;
           Bool rebound;
           Bool date;
-          Bool utc;
           Bool box;
       	  Bool noquit;
           char *format;
