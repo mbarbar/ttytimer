@@ -377,7 +377,8 @@ key_event(void)
 {
      int i, c;
 
-     struct timespec length = { ttyclock->option.delay, ttyclock->option.nsdelay };
+     // s delay and ns delay.
+     struct timespec length = { 1, 0 };
      switch(c = wgetch(stdscr))
      {
      case 'q':
@@ -429,9 +430,6 @@ main(int argc, char **argv)
      strncpy(ttyclock->option.format, "%F", 100);
      /* Default color */
      ttyclock->option.color = COLOR_GREEN; /* COLOR_GREEN = 2 */
-     /* Default delay */
-     ttyclock->option.delay = 1; /* 1FPS */
-     ttyclock->option.nsdelay = 0; /* -0FPS */
 
      atexit(cleanup);
 
@@ -441,7 +439,7 @@ main(int argc, char **argv)
           {
           case 'h':
           default:
-               printf("usage : tty-clock [-iuvSbtahDBxn] [-C [0-7]] [-f format] [-d delay] [-a nsdelay] [-T tty] \n"
+               printf("usage : tty-clock [-iuvSbtahDBxn] [-C [0-7]] [-f format] [-T tty] \n"
                       "    -x            Show box                                       \n"
                       "    -C [0-7]      Set the clock color                            \n"
                       "    -b            Use bold colors                                \n"
@@ -451,9 +449,7 @@ main(int argc, char **argv)
                       "    -v            Show tty-clock version                         \n"
                       "    -i            Show some info about tty-clock                 \n"
                       "    -h            Show this page                                 \n"
-                      "    -D            Hide date                                      \n"
-                      "    -d delay      Set the delay between two redraws of the clock. Default 1s. \n"
-                      "    -a nsdelay    Additional delay between two redraws in nanoseconds. Default 0ns.\n");
+                      "    -D            Hide date                                      \n");
                exit(EXIT_SUCCESS);
                break;
           case 'i':
@@ -474,17 +470,9 @@ main(int argc, char **argv)
           case 'f':
                strncpy(ttyclock->option.format, optarg, 100);
                break;
-          case 'd':
-               if(atol(optarg) >= 0 && atol(optarg) < 100)
-                    ttyclock->option.delay = atol(optarg);
-               break;
           case 'D':
                ttyclock->option.date = False;
                break;
-          case 'a':
-               if(atol(optarg) >= 0 && atol(optarg) < 1000000000)
-                    ttyclock->option.nsdelay = atol(optarg);
-                break;
           case 'x':
                ttyclock->option.box = True;
                break;

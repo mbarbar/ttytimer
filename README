@@ -1,4 +1,4 @@
-usage : tty-clock [-iuvSbahDxn] [-C [0-7]] [-f format] [-d delay] [-a nsdelay] [-T tty] 
+usage : tty-clock [-iuvSbahDxn] [-C [0-7]] [-f format] [-T tty] 
     -x            Show box                                       
     -C [0-7]      Set the clock color                            
     -b            Use bold colors                                
@@ -9,5 +9,3 @@ usage : tty-clock [-iuvSbahDxn] [-C [0-7]] [-f format] [-d delay] [-a nsdelay] [
     -i            Show some info about tty-clock                 
     -h            Show this page                                 
     -D            Hide date                                      
-    -d delay      Set the delay between two redraws of the clock. Default 1s. 
-    -a nsdelay    Additional delay between two redraws in nanoseconds. Default 0ns.
