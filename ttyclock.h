@@ -69,7 +69,6 @@ typedef struct
      struct
      {
           Bool second;
-          Bool twelve;
           Bool center;
           Bool rebound;
           Bool date;

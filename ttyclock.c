@@ -184,14 +184,7 @@ update_hour(void)
 
      ihour = ttyclock->tm->tm_hour;
 
-     if(ttyclock->option.twelve)
-          ttyclock->meridiem = ((ihour > 12) ? PMSIGN : AMSIGN);
-     else
-          ttyclock->meridiem = "\0";
-
-     /* Manage hour for twelve mode */
-     ihour = ((ttyclock->option.twelve && ihour > 12)  ? (ihour - 12) : ihour);
-     ihour = ((ttyclock->option.twelve && !ihour) ? 12 : ihour);
+     ttyclock->meridiem = "\0";
 
      /* Set hour */
      ttyclock->date.hour[0] = ihour / 10;
@@ -463,14 +456,6 @@ key_event(void)
           set_second();
           break;
 
-     case 't':
-     case 'T':
-          ttyclock->option.twelve = !ttyclock->option.twelve;
-          /* Set the new ttyclock->date.datestr to resize date window */
-          update_hour();
-          clock_move(ttyclock->geo.x, ttyclock->geo.y, ttyclock->geo.w, ttyclock->geo.h);
-          break;
-
      case 'c':
      case 'C':
           set_center(!ttyclock->option.center);
@@ -545,7 +530,6 @@ main(int argc, char **argv)
                       "    -c            Set the clock at the center of the terminal    \n"
                       "    -C [0-7]      Set the clock color                            \n"
                       "    -b            Use bold colors                                \n"
-                      "    -t            Set the hour in 12h format                     \n"
 		      "    -T tty        Display the clock on the specified terminal    \n"
                       "    -r            Do rebound the clock                           \n"
                       "    -f format     Set the date format                            \n"
@@ -579,9 +563,6 @@ main(int argc, char **argv)
           case 'C':
                if(atoi(optarg) >= 0 && atoi(optarg) < 8)
                     ttyclock->option.color = atoi(optarg);
-               break;
-          case 't':
-               ttyclock->option.twelve = True;
                break;
           case 'r':
                ttyclock->option.rebound = True;
