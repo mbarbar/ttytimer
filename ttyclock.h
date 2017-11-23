@@ -69,7 +69,6 @@ typedef struct
      {
           Bool date;
           Bool box;
-      	  Bool noquit;
           char *format;
           int color;
           Bool bold;

@@ -366,12 +366,6 @@ key_event(void)
      struct timespec length = { 1, 0 };
      switch(c = wgetch(stdscr))
      {
-     case 'q':
-     case 'Q':
-          if (ttyclock->option.noquit == False)
-		  ttyclock->running = False;
-          break;
-
      case 'b':
      case 'B':
           ttyclock->option.bold = !ttyclock->option.bold;
@@ -429,7 +423,6 @@ main(int argc, char **argv)
                       "    -C [0-7]      Set the clock color                            \n"
                       "    -b            Use bold colors                                \n"
                       "    -f format     Set the date format                            \n"
-		      "    -n            Don't quit on keypress                         \n"
                       "    -v            Show tty-clock version                         \n"
                       "    -i            Show some info about tty-clock                 \n"
                       "    -h            Show this page                                 \n"
@@ -460,9 +453,6 @@ main(int argc, char **argv)
           case 'x':
                ttyclock->option.box = True;
                break;
-	  case 'n':
-	       ttyclock->option.noquit = True;
-	       break;
           }
      }
 

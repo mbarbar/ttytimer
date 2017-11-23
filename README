@@ -1,9 +1,8 @@
-usage : tty-clock [-iuvSbahDxn] [-C [0-7]] [-f format]
+usage : tty-clock [-iuvSbahDx] [-C [0-7]] [-f format]
     -x            Show box                                       
     -C [0-7]      Set the clock color                            
     -b            Use bold colors                                
     -f format     Set the date format                            
-    -n            Don't quit on keypress                         
     -v            Show tty-clock version                         
     -i            Show some info about tty-clock                 
     -h            Show this page                                 
