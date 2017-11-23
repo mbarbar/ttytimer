@@ -418,29 +418,6 @@ key_event(void)
      int i, c;
 
      struct timespec length = { ttyclock->option.delay, ttyclock->option.nsdelay };
-     
-     if (ttyclock->option.screensaver)
-     {
-          c = wgetch(stdscr);
-          if(c != ERR && ttyclock->option.noquit == False)
-          {
-               ttyclock->running = False;
-          }
-          else
-          {
-               nanosleep(&length, NULL);
-               for(i = 0; i < 8; ++i)
-                    if(c == (i + '0'))
-                    {
-                         ttyclock->option.color = i;
-                         init_pair(1, ttyclock->bg, i);
-                         init_pair(2, i, ttyclock->bg);
-                    }
-          }
-          return;
-     }
-     
-
      switch(c = wgetch(stdscr))
      {
      case KEY_UP:
@@ -564,7 +541,6 @@ main(int argc, char **argv)
           default:
                printf("usage : tty-clock [-iuvsScbtrahDBxn] [-C [0-7]] [-f format] [-d delay] [-a nsdelay] [-T tty] \n"
                       "    -s            Show seconds                                   \n"
-                      "    -S            Screensaver mode                               \n"
                       "    -x            Show box                                       \n"
                       "    -c            Set the clock at the center of the terminal    \n"
                       "    -C [0-7]      Set the clock color                            \n"
@@ -593,9 +569,6 @@ main(int argc, char **argv)
                break;
           case 's':
                ttyclock->option.second = True;
-               break;
-          case 'S':
-               ttyclock->option.screensaver = True;
                break;
           case 'c':
                ttyclock->option.center = True;

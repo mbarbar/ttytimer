@@ -69,7 +69,6 @@ typedef struct
      struct
      {
           Bool second;
-          Bool screensaver;
           Bool twelve;
           Bool center;
           Bool rebound;
