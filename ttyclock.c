@@ -38,19 +38,7 @@ init(void)
      struct sigaction sig;
      ttyclock->bg = COLOR_BLACK;
 
-     /* Init ncurses */
-     if (ttyclock->tty) {
-	     FILE *ftty = fopen(ttyclock->tty, "r+");
-	     if (!ftty) {
-		     fprintf(stderr, "tty-clock: error: '%s' couldn't be opened: %s.\n",
-				     ttyclock->tty, strerror(errno));
-		     exit(EXIT_FAILURE);
-	     }
-	     ttyclock->ttyscr = newterm(NULL, ftty, ftty);
-	     assert(ttyclock->ttyscr != NULL);
-	     set_term(ttyclock->ttyscr);
-     } else
-	     initscr();
+     initscr();
 
      cbreak();
      noecho();
@@ -164,9 +152,6 @@ cleanup(void)
 {
 	if (ttyclock->ttyscr)
 		delscreen(ttyclock->ttyscr);
-
-	if (ttyclock && ttyclock->tty)
-		free(ttyclock->tty);
 	if (ttyclock && ttyclock->option.format)
 		free(ttyclock->option.format);
 	if (ttyclock)
@@ -443,7 +428,6 @@ main(int argc, char **argv)
                       "    -x            Show box                                       \n"
                       "    -C [0-7]      Set the clock color                            \n"
                       "    -b            Use bold colors                                \n"
-		      "    -T tty        Display the clock on the specified terminal    \n"
                       "    -f format     Set the date format                            \n"
 		      "    -n            Don't quit on keypress                         \n"
                       "    -v            Show tty-clock version                         \n"
@@ -476,22 +460,6 @@ main(int argc, char **argv)
           case 'x':
                ttyclock->option.box = True;
                break;
-	  case 'T': {
-	       struct stat sbuf;
-	       if (stat(optarg, &sbuf) == -1) {
-		       fprintf(stderr, "tty-clock: error: couldn't stat '%s': %s.\n",
-				       optarg, strerror(errno));
-		       exit(EXIT_FAILURE);
-	       } else if (!S_ISCHR(sbuf.st_mode)) {
-		       fprintf(stderr, "tty-clock: error: '%s' doesn't appear to be a character device.\n",
-				       optarg);
-		       exit(EXIT_FAILURE);
-	       } else {
-	       		if (ttyclock->tty)
-				free(ttyclock->tty);
-			ttyclock->tty = strdup(optarg);
-	       }}
-	       break;
 	  case 'n':
 	       ttyclock->option.noquit = True;
 	       break;

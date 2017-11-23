@@ -62,7 +62,6 @@ typedef struct
     
      /* terminal variables */ 
      SCREEN *ttyscr;
-     char *tty;
      int bg;
 
      /* Running option */
