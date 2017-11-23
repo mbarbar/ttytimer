@@ -341,6 +341,11 @@ key_event(void)
      struct timespec length = { 1, 0 };
      switch(c = wgetch(stdscr))
      {
+     case 'q':
+     case 'Q':
+          ttyclock->running = False;
+          break;
+
      case 'b':
      case 'B':
           ttyclock->option.bold = !ttyclock->option.bold;
