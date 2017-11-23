@@ -67,9 +67,7 @@ typedef struct
      /* Running option */
      struct
      {
-          Bool date;
           Bool box;
-          char *format;
           int color;
           Bool bold;
      } option;

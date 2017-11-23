@@ -103,19 +103,15 @@ init(void)
                                 ttyclock->geo.x + ttyclock->geo.h - 1,
                                 ttyclock->geo.y + (ttyclock->geo.w / 2) -
                                 (strlen(ttyclock->date.datestr) / 2) - 1);
-     if(ttyclock->option.box && ttyclock->option.date) {
-          box(ttyclock->datewin, 0, 0);
-     }
+     if (ttyclock->option.box) box(ttyclock->datewin, 0, 0);
+
      clearok(ttyclock->datewin, True);
 
      set_center();
 
      nodelay(stdscr, True);
 
-     if (ttyclock->option.date)
-     {
-          wrefresh(ttyclock->datewin);
-     }
+     wrefresh(ttyclock->datewin);
 
      wrefresh(ttyclock->framewin);
 
@@ -152,8 +148,6 @@ cleanup(void)
 {
 	if (ttyclock->ttyscr)
 		delscreen(ttyclock->ttyscr);
-	if (ttyclock && ttyclock->option.format)
-		free(ttyclock->option.format);
 	if (ttyclock)
 		free(ttyclock);
 }
@@ -162,7 +156,6 @@ void
 update_hour(void)
 {
      int ihour;
-     char tmpstr[128];
 
      ttyclock->lt = time(NULL);
      ttyclock->tm = localtime(&(ttyclock->lt));
@@ -180,11 +173,7 @@ update_hour(void)
      ttyclock->date.minute[1] = ttyclock->tm->tm_min % 10;
 
      /* Set date string */
-     strftime(tmpstr,
-              sizeof(tmpstr),
-              ttyclock->option.format,
-              ttyclock->tm);
-     sprintf(ttyclock->date.datestr, "%s%s", tmpstr, ttyclock->meridiem);
+     sprintf(ttyclock->date.datestr, "TEMP_DATE");
 
      /* Set seconds */
      ttyclock->date.second[0] = ttyclock->tm->tm_sec / 10;
@@ -243,12 +232,9 @@ draw_clock(void)
      else
           wattroff(ttyclock->datewin, A_BOLD);
 
-     if (ttyclock->option.date)
-     {
-          wbkgdset(ttyclock->datewin, (COLOR_PAIR(2)));
-          mvwprintw(ttyclock->datewin, (DATEWINH / 2), 1, ttyclock->date.datestr);
-          wrefresh(ttyclock->datewin);
-     }
+     wbkgdset(ttyclock->datewin, (COLOR_PAIR(2)));
+     mvwprintw(ttyclock->datewin, (DATEWINH / 2), 1, ttyclock->date.datestr);
+     wrefresh(ttyclock->datewin);
 
      /* Draw second frame. */
      /* Again 2 dot for number separation */
@@ -273,35 +259,24 @@ clock_move(int x, int y, int w, int h)
      werase(ttyclock->framewin);
      wrefresh(ttyclock->framewin);
 
-     if (ttyclock->option.date)
-     {
-          wbkgdset(ttyclock->datewin, COLOR_PAIR(0));
-          wborder(ttyclock->datewin, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-          werase(ttyclock->datewin);
-          wrefresh(ttyclock->datewin);
-     }
+     wbkgdset(ttyclock->datewin, COLOR_PAIR(0));
+     wborder(ttyclock->datewin, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+     werase(ttyclock->datewin);
+     wrefresh(ttyclock->datewin);
 
      /* Frame win move */
      mvwin(ttyclock->framewin, (ttyclock->geo.x = x), (ttyclock->geo.y = y));
      wresize(ttyclock->framewin, (ttyclock->geo.h = h), (ttyclock->geo.w = w));
 
      /* Date win move */
-     if (ttyclock->option.date)
-     {
-          mvwin(ttyclock->datewin,
-                ttyclock->geo.x + ttyclock->geo.h - 1,
-                ttyclock->geo.y + (ttyclock->geo.w / 2) - (strlen(ttyclock->date.datestr) / 2) - 1);
-          wresize(ttyclock->datewin, DATEWINH, strlen(ttyclock->date.datestr) + 2);
+     mvwin(ttyclock->datewin,
+           ttyclock->geo.x + ttyclock->geo.h - 1,
+           ttyclock->geo.y + (ttyclock->geo.w / 2) - (strlen(ttyclock->date.datestr) / 2) - 1);
+     wresize(ttyclock->datewin, DATEWINH, strlen(ttyclock->date.datestr) + 2);
 
-          if (ttyclock->option.box) {
-            box(ttyclock->datewin,  0, 0);
-          }
-     }
+     if (ttyclock->option.box) box(ttyclock->datewin,  0, 0);
 
-     if (ttyclock->option.box)
-     {
-        box(ttyclock->framewin, 0, 0);
-     }
+     if (ttyclock->option.box) box(ttyclock->framewin, 0, 0);
 
      wrefresh(ttyclock->framewin);
      wrefresh(ttyclock->datewin); 
@@ -401,12 +376,6 @@ main(int argc, char **argv)
      assert(ttyclock != NULL);
      memset(ttyclock, 0, sizeof(ttyclock_t));
 
-     ttyclock->option.date = True;
-
-     /* Date format */
-     ttyclock->option.format = malloc(sizeof(char) * 100);
-     /* Default date format */
-     strncpy(ttyclock->option.format, "%F", 100);
      /* Default color */
      ttyclock->option.color = COLOR_GREEN; /* COLOR_GREEN = 2 */
 
@@ -418,15 +387,13 @@ main(int argc, char **argv)
           {
           case 'h':
           default:
-               printf("usage : tty-clock [-iuvSbtahDBxn] [-C [0-7]] [-f format] [-T tty] \n"
+               printf("usage : tty-clock [-iuvSbtahBxn] [-C [0-7]] [-T tty] \n"
                       "    -x            Show box                                       \n"
                       "    -C [0-7]      Set the clock color                            \n"
                       "    -b            Use bold colors                                \n"
-                      "    -f format     Set the date format                            \n"
                       "    -v            Show tty-clock version                         \n"
                       "    -i            Show some info about tty-clock                 \n"
-                      "    -h            Show this page                                 \n"
-                      "    -D            Hide date                                      \n");
+                      "    -h            Show this page                                 \n");
                exit(EXIT_SUCCESS);
                break;
           case 'i':
@@ -443,12 +410,6 @@ main(int argc, char **argv)
           case 'C':
                if(atoi(optarg) >= 0 && atoi(optarg) < 8)
                     ttyclock->option.color = atoi(optarg);
-               break;
-          case 'f':
-               strncpy(ttyclock->option.format, optarg, 100);
-               break;
-          case 'D':
-               ttyclock->option.date = False;
                break;
           case 'x':
                ttyclock->option.box = True;
