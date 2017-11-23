@@ -1,10 +1,8 @@
-usage : tty-clock [-iuvScbrahDBxn] [-C [0-7]] [-f format] [-d delay] [-a nsdelay] [-T tty] 
+usage : tty-clock [-iuvSbahDBxn] [-C [0-7]] [-f format] [-d delay] [-a nsdelay] [-T tty] 
     -x            Show box                                       
-    -c            Set the clock at the center of the terminal    
     -C [0-7]      Set the clock color                            
     -b            Use bold colors                                
     -T tty        Display the clock on the specified terminal    
-    -r            Do rebound the clock                           
     -f format     Set the date format                            
     -n            Don't quit on keypress                         
     -v            Show tty-clock version                         

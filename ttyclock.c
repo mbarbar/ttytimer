@@ -120,7 +120,7 @@ init(void)
      }
      clearok(ttyclock->datewin, True);
 
-     set_center(ttyclock->option.center);
+     set_center();
 
      nodelay(stdscr, True);
 
@@ -324,30 +324,6 @@ clock_move(int x, int y, int w, int h)
      return;
 }
 
-/* Useless but fun :) */
-void
-clock_rebound(void)
-{
-     if(!ttyclock->option.rebound)
-          return;
-
-     if(ttyclock->geo.x < 1)
-          ttyclock->geo.a = 1;
-     if(ttyclock->geo.x > (LINES - ttyclock->geo.h - DATEWINH))
-          ttyclock->geo.a = -1;
-     if(ttyclock->geo.y < 1)
-          ttyclock->geo.b = 1;
-     if(ttyclock->geo.y > (COLS - ttyclock->geo.w - 1))
-          ttyclock->geo.b = -1;
-
-     clock_move(ttyclock->geo.x + ttyclock->geo.a,
-                ttyclock->geo.y + ttyclock->geo.b,
-                ttyclock->geo.w,
-                ttyclock->geo.h);
-
-     return;
-}
-
 void
 set_second(void)
 {
@@ -358,23 +334,18 @@ set_second(void)
 
      clock_move(ttyclock->geo.x, (ttyclock->geo.y - y_adj), new_w, ttyclock->geo.h);
 
-     set_center(ttyclock->option.center);
+     set_center();
 
      return;
 }
 
 void
-set_center(Bool b)
+set_center(void)
 {
-     if((ttyclock->option.center = b))
-     {
-          ttyclock->option.rebound = False;
-
-          clock_move((LINES / 2 - (ttyclock->geo.h / 2)),
-                     (COLS  / 2 - (ttyclock->geo.w / 2)),
-                     ttyclock->geo.w,
-                     ttyclock->geo.h);
-     }
+     clock_move((LINES / 2 - (ttyclock->geo.h / 2)),
+                (COLS  / 2 - (ttyclock->geo.w / 2)),
+                ttyclock->geo.w,
+                ttyclock->geo.h);
 
      return;
 }
@@ -410,59 +381,15 @@ key_event(void)
      struct timespec length = { ttyclock->option.delay, ttyclock->option.nsdelay };
      switch(c = wgetch(stdscr))
      {
-     case KEY_UP:
-     case 'k':
-     case 'K':
-          if(ttyclock->geo.x >= 1
-             && !ttyclock->option.center)
-               clock_move(ttyclock->geo.x - 1, ttyclock->geo.y, ttyclock->geo.w, ttyclock->geo.h);
-          break;
-
-     case KEY_DOWN:
-     case 'j':
-     case 'J':
-          if(ttyclock->geo.x <= (LINES - ttyclock->geo.h - DATEWINH)
-             && !ttyclock->option.center)
-               clock_move(ttyclock->geo.x + 1, ttyclock->geo.y, ttyclock->geo.w, ttyclock->geo.h);
-          break;
-
-     case KEY_LEFT:
-     case 'h':
-     case 'H':
-          if(ttyclock->geo.y >= 1
-             && !ttyclock->option.center)
-               clock_move(ttyclock->geo.x, ttyclock->geo.y - 1, ttyclock->geo.w, ttyclock->geo.h);
-          break;
-
-     case KEY_RIGHT:
-     case 'l':
-     case 'L':
-          if(ttyclock->geo.y <= (COLS - ttyclock->geo.w - 1)
-             && !ttyclock->option.center)
-               clock_move(ttyclock->geo.x, ttyclock->geo.y + 1, ttyclock->geo.w, ttyclock->geo.h);
-          break;
-
      case 'q':
      case 'Q':
           if (ttyclock->option.noquit == False)
 		  ttyclock->running = False;
           break;
 
-     case 'c':
-     case 'C':
-          set_center(!ttyclock->option.center);
-          break;
-
      case 'b':
      case 'B':
           ttyclock->option.bold = !ttyclock->option.bold;
-          break;
-
-     case 'r':
-     case 'R':
-          ttyclock->option.rebound = !ttyclock->option.rebound;
-          if(ttyclock->option.rebound && ttyclock->option.center)
-               ttyclock->option.center = False;
           break;
 
      case 'x':
@@ -516,13 +443,11 @@ main(int argc, char **argv)
           {
           case 'h':
           default:
-               printf("usage : tty-clock [-iuvScbtrahDBxn] [-C [0-7]] [-f format] [-d delay] [-a nsdelay] [-T tty] \n"
+               printf("usage : tty-clock [-iuvSbtahDBxn] [-C [0-7]] [-f format] [-d delay] [-a nsdelay] [-T tty] \n"
                       "    -x            Show box                                       \n"
-                      "    -c            Set the clock at the center of the terminal    \n"
                       "    -C [0-7]      Set the clock color                            \n"
                       "    -b            Use bold colors                                \n"
 		      "    -T tty        Display the clock on the specified terminal    \n"
-                      "    -r            Do rebound the clock                           \n"
                       "    -f format     Set the date format                            \n"
 		      "    -n            Don't quit on keypress                         \n"
                       "    -v            Show tty-clock version                         \n"
@@ -542,18 +467,12 @@ main(int argc, char **argv)
                puts("TTY-Clock 2 © devel version");
                exit(EXIT_SUCCESS);
                break;
-          case 'c':
-               ttyclock->option.center = True;
-               break;
           case 'b':
                ttyclock->option.bold = True;
                break;
           case 'C':
                if(atoi(optarg) >= 0 && atoi(optarg) < 8)
                     ttyclock->option.color = atoi(optarg);
-               break;
-          case 'r':
-               ttyclock->option.rebound = True;
                break;
           case 'f':
                strncpy(ttyclock->option.format, optarg, 100);
@@ -601,7 +520,6 @@ main(int argc, char **argv)
      attron(A_BLINK);
      while(ttyclock->running)
      {
-          clock_rebound();
           update_hour();
           draw_clock();
           key_event();
