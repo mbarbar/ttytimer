@@ -75,7 +75,6 @@ typedef struct
           int color;
           Bool bold;
           long delay;
-          Bool blink;
           long nsdelay;
      } option;
 

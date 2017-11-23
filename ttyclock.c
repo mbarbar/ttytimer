@@ -241,8 +241,7 @@ draw_clock(void)
      draw_number(ttyclock->date.hour[0], 1, 1);
      draw_number(ttyclock->date.hour[1], 1, 8);
      chtype dotcolor = COLOR_PAIR(1);
-     if (ttyclock->option.blink && time(NULL) % 2 == 0)
-          dotcolor = COLOR_PAIR(2);
+     if (time(NULL) % 2 == 0) dotcolor = COLOR_PAIR(2);
 
      /* 2 dot for number separation */
      wbkgdset(ttyclock->framewin, dotcolor);
@@ -433,7 +432,6 @@ main(int argc, char **argv)
      /* Default delay */
      ttyclock->option.delay = 1; /* 1FPS */
      ttyclock->option.nsdelay = 0; /* -0FPS */
-     ttyclock->option.blink = False;
 
      atexit(cleanup);
 
@@ -454,7 +452,6 @@ main(int argc, char **argv)
                       "    -i            Show some info about tty-clock                 \n"
                       "    -h            Show this page                                 \n"
                       "    -D            Hide date                                      \n"
-                      "    -B            Enable blinking colon                          \n"
                       "    -d delay      Set the delay between two redraws of the clock. Default 1s. \n"
                       "    -a nsdelay    Additional delay between two redraws in nanoseconds. Default 0ns.\n");
                exit(EXIT_SUCCESS);
@@ -483,9 +480,6 @@ main(int argc, char **argv)
                break;
           case 'D':
                ttyclock->option.date = False;
-               break;
-          case 'B':
-               ttyclock->option.blink = True;
                break;
           case 'a':
                if(atol(optarg) >= 0 && atol(optarg) < 1000000000)
