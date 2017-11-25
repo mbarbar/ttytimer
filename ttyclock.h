@@ -49,54 +49,52 @@
 #define NORMFRAMEW 35
 #define SECFRAMEW  54
 #define DATEWINH   3
-#define AMSIGN     " [AM]"
-#define PMSIGN     " [PM]"
 
 typedef enum { False, True } Bool;
 
 /* Global ttyclock struct */
 typedef struct
 {
-     /* while() boolean */
-     Bool running;
-    
-     /* terminal variables */ 
-     SCREEN *ttyscr;
-     int bg;
+        /* while() boolean */
+        Bool running;
 
-     /* Running option */
-     struct
-     {
-          Bool box;
-          int color;
-          Bool bold;
-     } option;
+        /* terminal variables */ 
+        SCREEN *ttyscr;
+        int bg;
 
-     /* Clock geometry */
-     struct
-     {
-          int x, y, w, h;
-          /* For rebound use (see clock_rebound())*/
-          int a, b;
-     } geo;
+        /* Running option */
+        struct
+        {
+                Bool box;
+                int color;
+                Bool bold;
+        } option;
 
-     /* Date content ([2] = number by number) */
-     struct
-     {
-          unsigned int hour[2];
-          unsigned int minute[2];
-          unsigned int second[2];
-          char datestr[256];
-     } date;
+        /* Clock geometry */
+        struct
+        {
+                int x, y, w, h;
+                /* For rebound use (see clock_rebound())*/
+                int a, b;
+        } geo;
 
-     /* time.h utils */
-     struct tm *tm;
-     time_t lt;
+        /* Date content ([2] = number by number) */
+        struct
+        {
+                unsigned int hour[2];
+                unsigned int minute[2];
+                unsigned int second[2];
+                char datestr[256];
+        } date;
 
-     /* Clock member */
-     char *meridiem;
-     WINDOW *framewin;
-     WINDOW *datewin;
+        /* time.h utils */
+        struct tm *tm;
+        time_t lt;
+
+        /* Clock member */
+        char *meridiem;
+        WINDOW *framewin;
+        WINDOW *datewin;
 
 } ttyclock_t;
 
@@ -118,16 +116,16 @@ ttyclock_t *ttyclock;
 /* Number matrix */
 const Bool number[][15] =
 {
-     {1,1,1,1,0,1,1,0,1,1,0,1,1,1,1}, /* 0 */
-     {0,0,1,0,0,1,0,0,1,0,0,1,0,0,1}, /* 1 */
-     {1,1,1,0,0,1,1,1,1,1,0,0,1,1,1}, /* 2 */
-     {1,1,1,0,0,1,1,1,1,0,0,1,1,1,1}, /* 3 */
-     {1,0,1,1,0,1,1,1,1,0,0,1,0,0,1}, /* 4 */
-     {1,1,1,1,0,0,1,1,1,0,0,1,1,1,1}, /* 5 */
-     {1,1,1,1,0,0,1,1,1,1,0,1,1,1,1}, /* 6 */
-     {1,1,1,0,0,1,0,0,1,0,0,1,0,0,1}, /* 7 */
-     {1,1,1,1,0,1,1,1,1,1,0,1,1,1,1}, /* 8 */
-     {1,1,1,1,0,1,1,1,1,0,0,1,1,1,1}, /* 9 */
+        {1,1,1,1,0,1,1,0,1,1,0,1,1,1,1}, /* 0 */
+        {0,0,1,0,0,1,0,0,1,0,0,1,0,0,1}, /* 1 */
+        {1,1,1,0,0,1,1,1,1,1,0,0,1,1,1}, /* 2 */
+        {1,1,1,0,0,1,1,1,1,0,0,1,1,1,1}, /* 3 */
+        {1,0,1,1,0,1,1,1,1,0,0,1,0,0,1}, /* 4 */
+        {1,1,1,1,0,0,1,1,1,0,0,1,1,1,1}, /* 5 */
+        {1,1,1,1,0,0,1,1,1,1,0,1,1,1,1}, /* 6 */
+        {1,1,1,0,0,1,0,0,1,0,0,1,0,0,1}, /* 7 */
+        {1,1,1,1,0,1,1,1,1,1,0,1,1,1,1}, /* 8 */
+        {1,1,1,1,0,1,1,1,1,0,0,1,1,1,1}, /* 9 */
 };
 
 #endif /* TTYCLOCK_H_INCLUDED */
