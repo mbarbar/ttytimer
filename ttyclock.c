@@ -36,6 +36,16 @@
 /* Maximum number of digits in a time string, hh:mm:ss. */
 #define N_TIME_DIGITS 6
 
+static bool time_is_zero(void) {
+        return ttyclock->date.hour[0] == 0
+               && ttyclock->date.hour[1] == 0
+               && ttyclock->date.minute[0] == 0
+               && ttyclock->date.minute[1] == 0
+               && ttyclock->date.second[0] == 0
+               && ttyclock->date.second[1] == 0;
+}
+
+
 void init(void) {
         struct sigaction sig;
         ttyclock->bg = COLOR_BLACK;
@@ -154,7 +164,7 @@ void update_hour(void) {
         ttyclock->date.second[1] = seconds % 10;
 }
 
-void draw_number(int n, int x, int y) {
+void draw_number(int n, int x, int y, unsigned int color) {
         int i, sy = y;
 
         for(i = 0; i < 30; ++i, ++sy) {
@@ -166,7 +176,8 @@ void draw_number(int n, int x, int y) {
                 if (ttyclock->option.bold) wattron(ttyclock->framewin, A_BLINK);
                 else wattroff(ttyclock->framewin, A_BLINK);
 
-                wbkgdset(ttyclock->framewin, COLOR_PAIR(number[n][i/2]));
+                wbkgdset(ttyclock->framewin,
+                         COLOR_PAIR(number[n][i/2] * color));
                 mvwaddch(ttyclock->framewin, x, sy, ' ');
         }
 
@@ -174,11 +185,18 @@ void draw_number(int n, int x, int y) {
 }
 
 void draw_clock(void) {
-        /* Draw hour numbers */
-        draw_number(ttyclock->date.hour[0], 1, 1);
-        draw_number(ttyclock->date.hour[1], 1, 8);
         chtype dotcolor = COLOR_PAIR(1);
-        if (time(NULL) % 2 == 0) dotcolor = COLOR_PAIR(2);
+        unsigned int numcolor = 1;
+
+        /* Change the colours to blink at certain times. */
+        if (time(NULL) % 2 == 0) {
+                dotcolor = COLOR_PAIR(2);
+                if (time_is_zero()) numcolor = 2;
+        }
+
+        /* Draw hour numbers */
+        draw_number(ttyclock->date.hour[0], 1, 1, numcolor);
+        draw_number(ttyclock->date.hour[1], 1, 8, numcolor);
 
         /* 2 dot for number separation */
         wbkgdset(ttyclock->framewin, dotcolor);
@@ -186,8 +204,8 @@ void draw_clock(void) {
         mvwaddstr(ttyclock->framewin, 4, 16, "  ");
 
         /* Draw minute numbers */
-        draw_number(ttyclock->date.minute[0], 1, 20);
-        draw_number(ttyclock->date.minute[1], 1, 27);
+        draw_number(ttyclock->date.minute[0], 1, 20, numcolor);
+        draw_number(ttyclock->date.minute[1], 1, 27, numcolor);
 
         /* Draw the date */
         if (ttyclock->option.bold) wattron(ttyclock->datewin, A_BOLD);
@@ -204,8 +222,8 @@ void draw_clock(void) {
         mvwaddstr(ttyclock->framewin, 4, NORMFRAMEW, "  ");
 
         /* Draw second numbers */
-        draw_number(ttyclock->date.second[0], 1, 39);
-        draw_number(ttyclock->date.second[1], 1, 46);
+        draw_number(ttyclock->date.second[0], 1, 39, numcolor);
+        draw_number(ttyclock->date.second[1], 1, 46, numcolor);
 }
 
 void clock_move(int x, int y, int w, int h) {
@@ -430,9 +448,7 @@ int main(int argc, char **argv) {
 
         parse_time_arg(argv[optind]);
         /* Ensure input is anything but 0. */
-        if (ttyclock->date.hour[0] == 0 && ttyclock->date.hour[1] == 0
-            && ttyclock->date.minute[0] == 0 && ttyclock->date.minute[1] == 0
-            && ttyclock->date.second[0] == 0 && ttyclock->date.second[1] == 0) {
+        if (time_is_zero()) {
                 puts("Time argument is zero");
                 exit(EXIT_FAILURE);
         }
@@ -441,10 +457,10 @@ int main(int argc, char **argv) {
 
         init();
         attron(A_BLINK);
-        while(ttyclock->running) {
+        while (ttyclock->running) {
                 draw_clock();
                 key_event();
-                update_hour();
+                if (!time_is_zero()) update_hour();
         }
 
         endwin();

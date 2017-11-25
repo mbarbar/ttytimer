@@ -101,7 +101,7 @@ typedef struct
 void init(void);
 void signal_handler(int signal);
 void update_hour(void);
-void draw_number(int n, int x, int y);
+void draw_number(int n, int x, int y, unsigned int color);
 void draw_clock(void);
 void clock_move(int x, int y, int w, int h);
 void set_second(void);
