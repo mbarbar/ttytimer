@@ -76,7 +76,6 @@ void init(void) {
         ttyclock->geo.h = 7;
         ttyclock->tm = localtime(&(ttyclock->lt));
         ttyclock->lt = time(NULL);
-        update_hour();
 
         /* Create clock win */
         ttyclock->framewin = newwin(ttyclock->geo.h,
@@ -131,27 +130,28 @@ void cleanup(void) {
         if (ttyclock) free(ttyclock);
 }
 
+/* Decrements ttyclock's time by 1 second. */
 void update_hour(void) {
-        int ihour;
+        unsigned int seconds = ttyclock->date.second[0] * 10
+                               + ttyclock->date.second[1];
+        unsigned int minutes = ttyclock->date.minute[0] * 10
+                               + ttyclock->date.minute[1];
+        unsigned int hours = ttyclock->date.hour[0] * 10
+                             + ttyclock->date.hour[1];
 
-        ttyclock->lt = time(NULL);
-        ttyclock->tm = localtime(&(ttyclock->lt));
+        if (minutes == 0 && seconds == 0) hours = hours == 0 ? 59 : hours - 1;
+        if (seconds == 0) minutes = minutes == 0 ? 59 : minutes - 1;
+        seconds = seconds == 0 ? 59 : seconds - 1;
 
-        ihour = ttyclock->tm->tm_hour;
+        /* Put it all back into ttyclock. */
+        ttyclock->date.hour[0] = hours / 10;
+        ttyclock->date.hour[1] = hours % 10;
 
-        ttyclock->meridiem = "\0";
+        ttyclock->date.minute[0] = minutes / 10;
+        ttyclock->date.minute[1] = minutes % 10;
 
-        /* Set hour */
-        ttyclock->date.hour[0] = ihour / 10;
-        ttyclock->date.hour[1] = ihour % 10;
-
-        /* Set minutes */
-        ttyclock->date.minute[0] = ttyclock->tm->tm_min / 10;
-        ttyclock->date.minute[1] = ttyclock->tm->tm_min % 10;
-
-        /* Set seconds */
-        ttyclock->date.second[0] = ttyclock->tm->tm_sec / 10;
-        ttyclock->date.second[1] = ttyclock->tm->tm_sec % 10;
+        ttyclock->date.second[0] = seconds / 10;
+        ttyclock->date.second[1] = seconds % 10;
 }
 
 void draw_number(int n, int x, int y) {
@@ -442,9 +442,9 @@ int main(int argc, char **argv) {
         init();
         attron(A_BLINK);
         while(ttyclock->running) {
-                update_hour();
                 draw_clock();
                 key_event();
+                update_hour();
         }
 
         endwin();
