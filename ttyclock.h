@@ -84,7 +84,7 @@ typedef struct
                 unsigned int hour[2];
                 unsigned int minute[2];
                 unsigned int second[2];
-                char datestr[256];
+                char timestr[9];  /* hh:mm:ss */
         } date;
 
         /* time.h utils */

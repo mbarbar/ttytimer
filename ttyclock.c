@@ -88,10 +88,10 @@ void init(void) {
         if (ttyclock->option.bold) wattron(ttyclock->framewin, A_BLINK);
 
         /* Create the date win */
-        ttyclock->datewin = newwin(DATEWINH, strlen(ttyclock->date.datestr) + 2,
+        ttyclock->datewin = newwin(DATEWINH, strlen(ttyclock->date.timestr) + 2,
                                    ttyclock->geo.x + ttyclock->geo.h - 1,
                                    ttyclock->geo.y + (ttyclock->geo.w / 2) -
-                                   (strlen(ttyclock->date.datestr) / 2) - 1);
+                                   (strlen(ttyclock->date.timestr) / 2) - 1);
 
         if (ttyclock->option.box) box(ttyclock->datewin, 0, 0);
 
@@ -149,9 +149,6 @@ void update_hour(void) {
         ttyclock->date.minute[0] = ttyclock->tm->tm_min / 10;
         ttyclock->date.minute[1] = ttyclock->tm->tm_min % 10;
 
-        /* Set date string */
-        sprintf(ttyclock->date.datestr, "TEMP_DATE");
-
         /* Set seconds */
         ttyclock->date.second[0] = ttyclock->tm->tm_sec / 10;
         ttyclock->date.second[1] = ttyclock->tm->tm_sec % 10;
@@ -197,7 +194,7 @@ void draw_clock(void) {
         else wattroff(ttyclock->datewin, A_BOLD);
 
         wbkgdset(ttyclock->datewin, (COLOR_PAIR(2)));
-        mvwprintw(ttyclock->datewin, (DATEWINH / 2), 1, ttyclock->date.datestr);
+        mvwprintw(ttyclock->datewin, (DATEWINH / 2), 1, ttyclock->date.timestr);
         wrefresh(ttyclock->datewin);
 
         /* Draw second frame. */
@@ -232,9 +229,9 @@ void clock_move(int x, int y, int w, int h) {
         mvwin(ttyclock->datewin,
               ttyclock->geo.x + ttyclock->geo.h - 1,
               ttyclock->geo.y + (ttyclock->geo.w / 2)
-              - (strlen(ttyclock->date.datestr) / 2) - 1);
+              - (strlen(ttyclock->date.timestr) / 2) - 1);
         wresize(ttyclock->datewin, DATEWINH,
-                strlen(ttyclock->date.datestr) + 2);
+                strlen(ttyclock->date.timestr) + 2);
 
         if (ttyclock->option.box) box(ttyclock->datewin,  0, 0);
 
@@ -333,7 +330,8 @@ static void fill_ttyclock_time(int *digits, unsigned int *time) {
 }
 
 /* Parses time into ttyclock->date.hour/minute/second. Exits with
- * an error message on bad time format.
+ * an error message on bad time format. Sets timestr to what was
+ * parsed.
  * time format: hh:mm:ss, where all but the colons are optional.
  */
 static void parse_time_arg(char *time) {
@@ -365,6 +363,16 @@ static void parse_time_arg(char *time) {
         fill_ttyclock_time(digits, ttyclock->date.hour);
         fill_ttyclock_time(digits + 2, ttyclock->date.minute);
         fill_ttyclock_time(digits + 4, ttyclock->date.second);
+
+        ttyclock->date.timestr[0] = ttyclock->date.hour[0] + '0';
+        ttyclock->date.timestr[1] = ttyclock->date.hour[1] + '0';
+        ttyclock->date.timestr[2] = ':';
+        ttyclock->date.timestr[3] = ttyclock->date.minute[0] + '0';
+        ttyclock->date.timestr[4] = ttyclock->date.minute[1] + '0';
+        ttyclock->date.timestr[5] = ':';
+        ttyclock->date.timestr[6] = ttyclock->date.second[0] + '0';
+        ttyclock->date.timestr[7] = ttyclock->date.second[1] + '0';
+        ttyclock->date.timestr[8] = '\0';
 }
 
 int main(int argc, char **argv) {
@@ -421,12 +429,15 @@ int main(int argc, char **argv) {
         }
 
         parse_time_arg(argv[optind]);
+        /* Ensure input is anything but 0. */
         if (ttyclock->date.hour[0] == 0 && ttyclock->date.hour[1] == 0
             && ttyclock->date.minute[0] == 0 && ttyclock->date.minute[1] == 0
             && ttyclock->date.second[0] == 0 && ttyclock->date.second[1] == 0) {
                 puts("Time argument is zero");
                 exit(EXIT_FAILURE);
         }
+
+        puts(ttyclock->date.timestr);
 
         init();
         attron(A_BLINK);
