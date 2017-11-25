@@ -29,7 +29,12 @@
  *      OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <ctype.h>
+
 #include "ttyclock.h"
+
+/* Maximum number of digits in a time string, hh:mm:ss. */
+#define N_TIME_DIGITS 6
 
 void init(void) {
         struct sigaction sig;
@@ -315,6 +320,53 @@ void key_event(void) {
         }
 }
 
+/* Fills two elements from digits into time, handling the -1 case. */
+static void fill_ttyclock_time(int *digits, unsigned int *time) {
+        if (digits[1] == -1) {
+                time[0] = 0;
+                if (digits[0] == -1) time[1] = 0;
+                else time[1] = digits[0];
+        } else {
+                time[0] = digits[0];
+                time[1] = digits[1];
+        }
+}
+
+/* Parses time into ttyclock->date.hour/minute/second. Exits with
+ * an error message on bad time format.
+ * time format: hh:mm:ss, where all but the colons are optional.
+ */
+static void parse_time_arg(char *time) {
+        int digits[N_TIME_DIGITS];
+        for (int i = 0; i < N_TIME_DIGITS; ++i) digits[i] = -1;
+
+        int i = 0, remaining = 2;
+        while (*time != '\0') {
+                if (isdigit(*time)) {
+                        if (remaining == 0) {
+                                puts("Too many digits in time argument");
+                                exit(EXIT_FAILURE);
+                        }
+
+                        digits[i] = *time - '0';
+                        ++i;
+                        --remaining;
+                } else if (*time == ':') {
+                        i += remaining;
+                        remaining = 2;
+                } else {
+                        puts("Invalid character in time argument");
+                        exit(EXIT_FAILURE);
+                }
+
+                ++time;
+        }
+
+        fill_ttyclock_time(digits, ttyclock->date.hour);
+        fill_ttyclock_time(digits + 2, ttyclock->date.minute);
+        fill_ttyclock_time(digits + 4, ttyclock->date.second);
+}
+
 int main(int argc, char **argv) {
         int c;
 
@@ -339,6 +391,7 @@ int main(int argc, char **argv) {
                                         "    -v            Show tty-clock version                         \n"
                                         "    -i            Show some info about tty-clock                 \n"
                                         "    -h            Show this page                                 \n");
+                        printf("%c - %s\n", c, optarg);
                         exit(EXIT_SUCCESS);
                         break;
                 case 'i':
@@ -360,6 +413,19 @@ int main(int argc, char **argv) {
                         ttyclock->option.box = True;
                         break;
                 }
+        }
+
+        if (optind == argc) {
+                puts("usage TODO");
+                exit(EXIT_FAILURE);
+        }
+
+        parse_time_arg(argv[optind]);
+        if (ttyclock->date.hour[0] == 0 && ttyclock->date.hour[1] == 0
+            && ttyclock->date.minute[0] == 0 && ttyclock->date.minute[1] == 0
+            && ttyclock->date.second[0] == 0 && ttyclock->date.second[1] == 0) {
+                puts("Time argument is zero");
+                exit(EXIT_FAILURE);
         }
 
         init();
