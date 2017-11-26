@@ -47,11 +47,11 @@ static bool time_is_zero(void) {
 
 /* Prints usage message and exits with exit code exit_code. */
 static void usage(char *argv0, int exit_code) {
-        printf("usage : %s [-xbvih] [-C [0-7]] \n"
+        printf("usage : %s [-xbvih] [-C [0-7]] hh:mm:ss\n"
                "        -x            Show box\n"
                "        -C [0-7]      Set the clock color\n"
                "        -b            Use bold colors\n"
-               "        -v            Show tty-clock version\n"
+               "        -v            Show ttytimer version\n"
                "        -h            Show this page\n", argv0);
         exit(exit_code);
 }
