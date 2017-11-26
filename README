@@ -1,6 +1,0 @@
-usage : ttytimer [-xbvih] [-C [0-7]] hh:mm:ss
-        -x            Show box
-        -C [0-7]      Set the clock color
-        -b            Use bold colors
-        -v            Show ttytimer version
-        -h            Show this page
