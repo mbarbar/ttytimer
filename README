@@ -1,7 +1,6 @@
-usage : tty-clock [-iuvSbahDx] [-C [0-7]]
-    -x            Show box                                       
-    -C [0-7]      Set the clock color                            
-    -b            Use bold colors                                
-    -v            Show tty-clock version                         
-    -i            Show some info about tty-clock                 
-    -h            Show this page                                 
+usage : tty-clock [-xbvih] [-C [0-7]]
+        -x            Show box
+        -C [0-7]      Set the clock color
+        -b            Use bold colors
+        -v            Show tty-clock version
+        -h            Show this page

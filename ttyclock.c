@@ -45,6 +45,16 @@ static bool time_is_zero(void) {
                && ttyclock->date.second[1] == 0;
 }
 
+/* Prints usage message and exits with exit code exit_code. */
+static void usage(char *argv0, int exit_code) {
+        printf("usage : %s [-xbvih] [-C [0-7]] \n"
+               "        -x            Show box\n"
+               "        -C [0-7]      Set the clock color\n"
+               "        -b            Use bold colors\n"
+               "        -v            Show tty-clock version\n"
+               "        -h            Show this page\n", argv0);
+        exit(exit_code);
+}
 
 void init(void) {
         struct sigaction sig;
@@ -406,26 +416,13 @@ int main(int argc, char **argv) {
 
         atexit(cleanup);
 
-        while ((c = getopt(argc, argv, "ivsScbtrhBxnDC:f:d:T:a:")) != -1) {
+        while ((c = getopt(argc, argv, "vbhxC:")) != -1) {
                 switch(c) {
                 case 'h':
-                default:
-                        printf("usage : tty-clock [-iuvSbtahBxn] [-C [0-7]] [-T tty] \n"
-                                        "    -x            Show box                                       \n"
-                                        "    -C [0-7]      Set the clock color                            \n"
-                                        "    -b            Use bold colors                                \n"
-                                        "    -v            Show tty-clock version                         \n"
-                                        "    -i            Show some info about tty-clock                 \n"
-                                        "    -h            Show this page                                 \n");
-                        printf("%c - %s\n", c, optarg);
-                        exit(EXIT_SUCCESS);
-                        break;
-                case 'i':
-                        puts("TTY-Clock 2 © by Martin Duquesnoy (xorg62@gmail.com), Grey (grey@greytheory.net)");
-                        exit(EXIT_SUCCESS);
+                        usage(argv[0], EXIT_SUCCESS);
                         break;
                 case 'v':
-                        puts("TTY-Clock 2 © devel version");
+                        puts("ttytimer v0.1");
                         exit(EXIT_SUCCESS);
                         break;
                 case 'b':
@@ -438,13 +435,14 @@ int main(int argc, char **argv) {
                 case 'x':
                         ttyclock->option.box = True;
                         break;
+                default:
+                        usage(argv[0], EXIT_FAILURE);
+                        break;
                 }
         }
 
-        if (optind == argc) {
-                puts("usage TODO");
-                exit(EXIT_FAILURE);
-        }
+        /* We're missing the final time argument. */
+        if (optind == argc) usage(argv[0], EXIT_FAILURE);
 
         parse_time_arg(argv[optind]);
         /* Ensure input is anything but 0. */
