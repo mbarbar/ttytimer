@@ -1,4 +1,4 @@
-usage : tty-clock [-xbvih] [-C [0-7]]
+usage : ttytimer [-xbvih] [-C [0-7]]
         -x            Show box
         -C [0-7]      Set the clock color
         -b            Use bold colors

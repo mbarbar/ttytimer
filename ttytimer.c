@@ -31,7 +31,7 @@
 
 #include <ctype.h>
 
-#include "ttyclock.h"
+#include "ttytimer.h"
 
 /* Maximum number of digits in a time string, hh:mm:ss. */
 #define N_TIME_DIGITS 6
@@ -450,8 +450,6 @@ int main(int argc, char **argv) {
                 puts("Time argument is zero");
                 exit(EXIT_FAILURE);
         }
-
-        puts(ttyclock->date.timestr);
 
         init();
         attron(A_BLINK);

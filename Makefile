@@ -1,10 +1,8 @@
-#TTY-Clock MakeFile
-#Under BSD License
-#See clock.c for the license detail.
+#ttytimer MakeFile
 
-SRC = ttyclock.c
+SRC = ttytimer.c
 CC ?= gcc
-BIN = tty-clock
+BIN = ttytimer
 PREFIX ?= /usr/local
 INSTALLPATH = ${DESTDIR}${PREFIX}/bin
 MANPATH = ${DESTDIR}${PREFIX}/share/man/man1
@@ -20,7 +18,7 @@ else
 	LDFLAGS += $$(pkg-config --libs ncurses)
 endif
 
-tty-clock : ${SRC}
+ttytimer : ${SRC}
 
 	@echo "building ${SRC}"
 	${CC} ${CFLAGS} ${SRC} -o ${BIN} ${LDFLAGS}
