@@ -47,9 +47,12 @@ static bool time_is_zero(void) {
 
 /* Prints usage message and exits with exit code exit_code. */
 static void usage(char *argv0, int exit_code) {
-        printf("usage : %s [-xbvih] [-C [0-7]] hh:mm:ss\n"
+        printf("usage : %s [-xbvih] [-C color] hh:mm:ss\n"
                "        -x            Show box\n"
-               "        -C [0-7]      Set the clock color\n"
+               "        -C color      Set the clock color\n"
+               "           color  ==  black | red | green\n"
+               "                      | yellow | blue | magenta\n"
+               "                      | cyan | white\n"
                "        -b            Use bold colors\n"
                "        -v            Show ttytimer version\n"
                "        -h            Show this page\n", argv0);
@@ -403,6 +406,18 @@ static void parse_time_arg(char *time) {
         ttyclock->date.timestr[8] = '\0';
 }
 
+int color_name_to_number(const char *color) {
+        if (strcmp(color, "black") == 0) return COLOR_BLACK;
+        else if (strcmp(color, "red") == 0) return COLOR_RED;
+        else if (strcmp(color, "green") == 0) return COLOR_GREEN;
+        else if (strcmp(color, "yellow") == 0) return COLOR_YELLOW;
+        else if (strcmp(color, "blue") == 0) return COLOR_BLUE;
+        else if (strcmp(color, "magenta") == 0) return COLOR_MAGENTA;
+        else if (strcmp(color, "cyan") == 0) return COLOR_CYAN;
+        else if (strcmp(color, "white") == 0) return COLOR_WHITE;
+        else return -1;
+}
+
 int main(int argc, char **argv) {
         int c;
 
@@ -416,6 +431,7 @@ int main(int argc, char **argv) {
 
         atexit(cleanup);
 
+        int color;
         while ((c = getopt(argc, argv, "vbhxC:")) != -1) {
                 switch(c) {
                 case 'h':
@@ -429,8 +445,13 @@ int main(int argc, char **argv) {
                         ttyclock->option.bold = True;
                         break;
                 case 'C':
-                        if(atoi(optarg) >= 0 && atoi(optarg) < 8)
-                                ttyclock->option.color = atoi(optarg);
+                        if ((color = color_name_to_number(optarg)) != -1) {
+                                ttyclock->option.color = color;
+                        } else {
+                                printf("Invalid color specified: %s\n", optarg);
+                                exit(EXIT_FAILURE);
+                        }
+
                         break;
                 case 'x':
                         ttyclock->option.box = True;
