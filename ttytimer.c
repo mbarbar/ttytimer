@@ -406,15 +406,17 @@ static void parse_time_arg(char *time) {
         ttyclock->date.timestr[8] = '\0';
 }
 
+/* Converts the name of a colour to its ncurses number. Case insensitive. */
 int color_name_to_number(const char *color) {
-        if (strcmp(color, "black") == 0) return COLOR_BLACK;
-        else if (strcmp(color, "red") == 0) return COLOR_RED;
-        else if (strcmp(color, "green") == 0) return COLOR_GREEN;
-        else if (strcmp(color, "yellow") == 0) return COLOR_YELLOW;
-        else if (strcmp(color, "blue") == 0) return COLOR_BLUE;
-        else if (strcmp(color, "magenta") == 0) return COLOR_MAGENTA;
-        else if (strcmp(color, "cyan") == 0) return COLOR_CYAN;
-        else if (strcmp(color, "white") == 0) return COLOR_WHITE;
+
+        if (strcasecmp(color, "black") == 0) return COLOR_BLACK;
+        else if (strcasecmp(color, "red") == 0) return COLOR_RED;
+        else if (strcasecmp(color, "green") == 0) return COLOR_GREEN;
+        else if (strcasecmp(color, "yellow") == 0) return COLOR_YELLOW;
+        else if (strcasecmp(color, "blue") == 0) return COLOR_BLUE;
+        else if (strcasecmp(color, "magenta") == 0) return COLOR_MAGENTA;
+        else if (strcasecmp(color, "cyan") == 0) return COLOR_CYAN;
+        else if (strcasecmp(color, "white") == 0) return COLOR_WHITE;
         else return -1;
 }
 
