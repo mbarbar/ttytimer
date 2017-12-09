@@ -324,16 +324,6 @@ void key_event(void) {
                 ttyclock->running = False;
                 break;
 
-        case 'b':
-        case 'B':
-                ttyclock->option.bold = !ttyclock->option.bold;
-                break;
-
-        case 'x':
-        case 'X':
-                set_box(!ttyclock->option.box);
-                break;
-
         default:
                 nanosleep(&length, NULL);
                 for (i = 0; i < 8; ++i) {
