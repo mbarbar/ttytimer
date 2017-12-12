@@ -1,5 +1,9 @@
+# ttytimer
+
 ttytimer is a fork of tty-clock by xorg62 which modifies the
 original project to be a timer, as the name suggests.
+
+## Usage
 
 ```
 usage : %s [-xbvih] [-C color] hh:mm:ss
@@ -13,7 +17,33 @@ usage : %s [-xbvih] [-C color] hh:mm:ss
         -h            Show this page
 ```
 
-TODO:
+### At runtime
+```
+[qQ] : quit
+```
+
+## Installation
+
+### Dependencies
+
+* `make`
+* ncurses 5
+* C compiler
+* `toot` (optional - for alarm on 00:00:00)
+
+### Instructions
+
+```
+make install
+```
+
+To install without `toot`,
+
+```
+make install TOOT=no
+```
+
+## TODO
 1. Option to count up rather than just down.
-1. Sound on 00:00:00.
 1. Man page - including detailed description of time format.
+
