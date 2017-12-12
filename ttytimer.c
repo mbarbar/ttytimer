@@ -31,6 +31,10 @@
 
 #include <ctype.h>
 
+#ifdef TOOT
+#include <toot.h>
+#endif
+
 #include "ttytimer.h"
 
 /* Maximum number of digits in a time string, hh:mm:ss. */
@@ -325,7 +329,12 @@ void key_event(void) {
                 break;
 
         default:
-                nanosleep(&length, NULL);
+                #ifdef TOOT
+                if (time_is_zero() && time(NULL) % 2 == 0) toot(500, 1000);
+                else
+                #endif
+                        nanosleep(&length, NULL);
+
                 for (i = 0; i < 8; ++i) {
                         if (c == (i + '0')) {
                                 ttyclock->option.color = i;

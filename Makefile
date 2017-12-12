@@ -18,6 +18,13 @@ else
 	LDFLAGS += $$(pkg-config --libs ncurses)
 endif
 
+ifeq ($(TOOT), no)
+	# Don't add toot library
+else
+	CFLAGS += -ltoot
+	CFLAGS += -D TOOT
+endif
+
 ttytimer : ${SRC}
 
 	@echo "building ${SRC}"
