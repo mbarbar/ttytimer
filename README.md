@@ -20,6 +20,7 @@ usage : %s [-xbvih] [-C color] hh:mm:ss
 ### At runtime
 ```
 [qQ] : quit
+[rR] : restart
 ```
 
 ## Installation

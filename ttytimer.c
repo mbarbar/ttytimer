@@ -37,9 +37,6 @@
 
 #include "ttytimer.h"
 
-/* Maximum number of digits in a time string, hh:mm:ss. */
-#define N_TIME_DIGITS 6
-
 static bool time_is_zero(void) {
         return ttyclock->date.hour[0] == 0
                && ttyclock->date.hour[1] == 0
@@ -317,6 +314,19 @@ void set_box(Bool b) {
         wrefresh(ttyclock->framewin);
 }
 
+/* Fills two elements from digits into time, handling the -1 case. */
+static void fill_ttyclock_time(int *digits, unsigned int *time) {
+        if (digits[1] == -1) {
+                time[0] = 0;
+                if (digits[0] == -1) time[1] = 0;
+                else time[1] = digits[0];
+        } else {
+                time[0] = digits[0];
+                time[1] = digits[1];
+        }
+}
+
+
 void key_event(void) {
         int i, c;
 
@@ -326,6 +336,16 @@ void key_event(void) {
         case 'q':
         case 'Q':
                 ttyclock->running = False;
+                break;
+
+        case 'r':
+        case 'R':
+                fill_ttyclock_time(ttyclock->initial_digits,
+                                   ttyclock->date.hour);
+                fill_ttyclock_time(ttyclock->initial_digits + 2,
+                                   ttyclock->date.minute);
+                fill_ttyclock_time(ttyclock->initial_digits + 4,
+                                   ttyclock->date.second);
                 break;
 
         default:
@@ -344,18 +364,6 @@ void key_event(void) {
                 }
 
                 break;
-        }
-}
-
-/* Fills two elements from digits into time, handling the -1 case. */
-static void fill_ttyclock_time(int *digits, unsigned int *time) {
-        if (digits[1] == -1) {
-                time[0] = 0;
-                if (digits[0] == -1) time[1] = 0;
-                else time[1] = digits[0];
-        } else {
-                time[0] = digits[0];
-                time[1] = digits[1];
         }
 }
 
@@ -393,6 +401,7 @@ static void parse_time_arg(char *time) {
         fill_ttyclock_time(digits, ttyclock->date.hour);
         fill_ttyclock_time(digits + 2, ttyclock->date.minute);
         fill_ttyclock_time(digits + 4, ttyclock->date.second);
+        memcpy(ttyclock->initial_digits, digits, N_TIME_DIGITS * sizeof(int));
 
         ttyclock->date.timestr[0] = ttyclock->date.hour[0] + '0';
         ttyclock->date.timestr[1] = ttyclock->date.hour[1] + '0';

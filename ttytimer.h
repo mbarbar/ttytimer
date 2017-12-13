@@ -49,6 +49,8 @@
 #define NORMFRAMEW 35
 #define SECFRAMEW  54
 #define DATEWINH   3
+/* Maximum number of digits in a time string, hh:mm:ss. */
+#define N_TIME_DIGITS 6
 
 typedef enum { False, True } Bool;
 
@@ -79,6 +81,7 @@ typedef struct
         } geo;
 
         /* Date content ([2] = number by number) */
+        int initial_digits[N_TIME_DIGITS];
         struct
         {
                 unsigned int hour[2];
